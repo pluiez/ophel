@@ -1390,67 +1390,7 @@ const FeaturesPage: React.FC<FeaturesPageProps> = ({ siteId, initialTab }) => {
           </SettingCard>
         </>
       )}
-      {/* ========== Prompt Tab ========== */}
-      {activeTab === FEATURES_TAB_IDS.PROMPTS && (
-        <SettingCard
-          title={t("promptSettingsTitle") || "Prompts Settings"}
-          description={t("promptSettingsDesc") || "Configure interactions in the prompts tab"}>
-          <ToggleRow
-            label={t("promptDoubleClickSendLabel") || "Double-click to send prompt"}
-            description={
-              t("promptDoubleClickSendDesc") ||
-              "When enabled, double-click sends the prompt directly. Prompts with variables are sent after confirmation."
-            }
-            settingId="prompt-double-click-send"
-            checked={settings.features?.prompts?.doubleClickToSend ?? false}
-            onChange={() =>
-              updateDeepSetting(
-                "features",
-                "prompts",
-                "doubleClickToSend",
-                !settings.features?.prompts?.doubleClickToSend,
-              )
-            }
-          />
-
-          <SettingRow
-            label={t("promptSubmitShortcutLabel") || "Send shortcut"}
-            description={
-              t("promptSubmitShortcutDesc") || "Applies to both manual send and prompt auto-send"
-            }
-            settingId="shortcuts-prompt-submit-shortcut">
-            <select
-              className="settings-select"
-              value={settings.features?.prompts?.submitShortcut ?? "enter"}
-              onChange={(e) =>
-                updateDeepSetting("features", "prompts", "submitShortcut", e.target.value)
-              }>
-              <option value="enter">{t("promptSubmitShortcutEnter") || "Enter"}</option>
-              <option value="ctrlEnter">
-                {t("promptSubmitShortcutCtrlEnter") || "Ctrl + Enter"}
-              </option>
-            </select>
-          </SettingRow>
-
-          <ToggleRow
-            label={t("queueSettingLabel") || "Prompt Queue"}
-            description={
-              t("queueSettingDesc") ||
-              "Show queue overlay above input for queuing prompts while AI generates"
-            }
-            settingId="prompt-queue"
-            checked={settings.features?.prompts?.promptQueue ?? false}
-            onChange={() =>
-              updateDeepSetting(
-                "features",
-                "prompts",
-                "promptQueue",
-                !(settings.features?.prompts?.promptQueue ?? false),
-              )
-            }
-          />
-        </SettingCard>
-      )}
+      {/* ========== Prompt Tab (interactive features removed in trim build) ========== */}
 
       {/* ========== Reading History Tab ========== */}
       {activeTab === FEATURES_TAB_IDS.READING_HISTORY && (
