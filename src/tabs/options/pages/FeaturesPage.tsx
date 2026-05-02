@@ -597,7 +597,6 @@ const FeaturesPage: React.FC<FeaturesPageProps> = ({ siteId, initialTab }) => {
   const tabs = [
     { id: FEATURES_TAB_IDS.OUTLINE, label: t("tabOutline") || "大纲" },
     { id: FEATURES_TAB_IDS.CONVERSATIONS, label: t("tabConversations") || "会话" },
-    { id: FEATURES_TAB_IDS.PROMPTS, label: t("tabPrompts") || "Prompts" },
     { id: FEATURES_TAB_IDS.TAB_SETTINGS, label: t("tabSettingsTab") || "标签页" },
     { id: FEATURES_TAB_IDS.REMINDER, label: t("reminderTab") || "提醒" },
     { id: FEATURES_TAB_IDS.CONTENT, label: t("navContent") || "内容交互" },
@@ -1390,8 +1389,6 @@ const FeaturesPage: React.FC<FeaturesPageProps> = ({ siteId, initialTab }) => {
           </SettingCard>
         </>
       )}
-      {/* ========== Prompt Tab (interactive features removed in trim build) ========== */}
-
       {/* ========== Reading History Tab ========== */}
       {activeTab === FEATURES_TAB_IDS.READING_HISTORY && (
         <SettingCard
