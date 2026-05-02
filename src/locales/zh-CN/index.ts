@@ -808,6 +808,8 @@ export const zhCN = {
   edgeSnapHideDesc: "拖动面板到屏幕边缘时自动吸附，悬停显示",
   edgeSnapThresholdLabel: "吸附触发距离",
   edgeSnapThresholdDesc: "拖拽面板到边缘多近时触发吸附",
+  edgeSnapPeekWidthLabel: "隐藏时露出宽度",
+  edgeSnapPeekWidthDesc: "自动吸附隐藏后面板留在视口内的宽度（0 表示完全隐藏）",
   // 面板位置设置
   defaultPositionLabel: "默认位置",
   defaultPositionDesc: "页面刷新后面板显示在哪一侧",

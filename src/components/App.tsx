@@ -294,6 +294,7 @@ const SETTING_SEARCH_TITLE_KEY_MAP: Record<string, string> = {
   "outline-update-interval": "outlineUpdateIntervalLabel",
   "panel-default-position": "defaultPositionLabel",
   "panel-edge-distance": "defaultEdgeDistanceLabel",
+  "panel-edge-snap-peek-width": "edgeSnapPeekWidthLabel",
   "panel-edge-snap-threshold": "edgeSnapThresholdLabel",
   "panel-height": "panelHeightLabel",
   "panel-mode": "panelModeLabel",

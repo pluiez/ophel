@@ -135,6 +135,14 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ siteId: _siteId, initialTab }
     setSettings(buildPanelPreview("edgeSnapThreshold", val))
   }
 
+  const handleSnapPeekWidthPreview = (val: number) => {
+    setPreviewSettings(buildPanelPreview("edgeSnapPeekWidth", val))
+  }
+
+  const handleSnapPeekWidthChange = (val: number) => {
+    setSettings(buildPanelPreview("edgeSnapPeekWidth", val))
+  }
+
   const handleHeightPreview = (val: number) => {
     setPreviewSettings(buildPanelPreview("height", val))
   }
@@ -411,6 +419,30 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ siteId: _siteId, initialTab }
                 defaultValue={30}
                 formatValue={(value) => `${value}px`}
                 ariaLabel={t("edgeSnapThresholdLabel") || "吸附触发距离"}
+              />
+            </SettingRow>
+          )}
+
+          {/* 隐藏时露出宽度 - 仅在自动吸附模式下显示 */}
+          {(settings.panel?.panelMode ?? "edge-snap") === "edge-snap" && (
+            <SettingRow
+              label={t("edgeSnapPeekWidthLabel") || "隐藏时露出宽度"}
+              description={
+                t("edgeSnapPeekWidthDesc") || "自动吸附隐藏后面板留在视口内的宽度（0 表示完全隐藏）"
+              }
+              settingId="panel-edge-snap-peek-width">
+              <Slider
+                value={settings.panel?.edgeSnapPeekWidth ?? 4}
+                onChange={handleSnapPeekWidthChange}
+                onPreviewChange={handleSnapPeekWidthPreview}
+                onCancelPreview={clearPreviewSettings}
+                min={0}
+                max={16}
+                step={1}
+                unit="px"
+                defaultValue={4}
+                formatValue={(value) => `${value}px`}
+                ariaLabel={t("edgeSnapPeekWidthLabel") || "隐藏时露出宽度"}
               />
             </SettingRow>
           )}
