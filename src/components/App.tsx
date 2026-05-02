@@ -13,7 +13,6 @@ import { ConversationManager } from "~core/conversation-manager"
 import { InlineBookmarkManager } from "~core/inline-bookmark-manager"
 import { OutlineManager, type OutlineNode } from "~core/outline-manager"
 import { AI_STUDIO_SHORTCUT_SYNC_EVENT, PromptManager } from "~core/prompt-manager"
-import { QueueDispatcher } from "~core/queue-dispatcher"
 import { ensureGlobalThemeManager, type ThemeTransitionOrigin } from "~core/theme-manager"
 import { useShortcuts } from "~hooks/useShortcuts"
 import { useSettingsHydrated, useSettingsStore } from "~stores/settings-store"
@@ -32,7 +31,6 @@ import { initCopyButtons, showCopySuccess } from "~utils/icons"
 import { ConfirmDialog, FolderSelectDialog, TagManagerDialog } from "./ConversationDialogs"
 import { DisclaimerModal } from "./DisclaimerModal"
 import { MainPanel } from "./MainPanel"
-import { QueueOverlay } from "./QueueOverlay"
 import { QuickButtons } from "./QuickButtons"
 import { SelectedPromptBar } from "./SelectedPromptBar"
 import { SettingsModal } from "./SettingsModal"
@@ -804,22 +802,6 @@ export const App = () => {
   const promptManager = useMemo(() => {
     return adapter ? new PromptManager(adapter) : null
   }, [adapter])
-
-  const queueDispatcher = useMemo(() => {
-    return adapter && promptManager ? new QueueDispatcher(adapter, promptManager) : null
-  }, [adapter, promptManager])
-
-  // QueueDispatcher lifecycle
-  useEffect(() => {
-    if (!queueDispatcher) return
-    const isQueueEnabled = settings?.features?.prompts?.promptQueue ?? false
-    if (isQueueEnabled) {
-      queueDispatcher.start()
-    } else {
-      queueDispatcher.stop()
-    }
-    return () => queueDispatcher.stop()
-  }, [queueDispatcher, settings?.features?.prompts?.promptQueue])
 
   const conversationManager = useMemo(() => {
     return adapter ? new ConversationManager(adapter) : null
@@ -2853,121 +2835,6 @@ export const App = () => {
     promptManager.syncAiStudioSubmitShortcut(promptSubmitShortcut)
   }, [adapter, promptManager, promptSubmitShortcut])
 
-  // Manual send: trigger only when focused element is the chat input
-  useEffect(() => {
-    if (!adapter || !promptManager) return
-
-    const insertNewLine = (editor: HTMLElement) => {
-      if (editor instanceof HTMLTextAreaElement) {
-        const start = editor.selectionStart ?? editor.value.length
-        const end = editor.selectionEnd ?? editor.value.length
-        editor.setRangeText("\n", start, end, "end")
-        editor.dispatchEvent(new Event("input", { bubbles: true }))
-        return
-      }
-
-      if (editor.getAttribute("contenteditable") !== "true") return
-
-      editor.focus()
-
-      const shiftEnterEvent: KeyboardEventInit = {
-        key: "Enter",
-        code: "Enter",
-        keyCode: 13,
-        which: 13,
-        bubbles: true,
-        cancelable: true,
-        composed: true,
-        shiftKey: true,
-      }
-
-      const beforeHTML = editor.innerHTML
-      editor.dispatchEvent(new KeyboardEvent("keydown", shiftEnterEvent))
-      editor.dispatchEvent(new KeyboardEvent("keypress", shiftEnterEvent))
-      editor.dispatchEvent(new KeyboardEvent("keyup", shiftEnterEvent))
-
-      // Fallback for editors that ignore synthetic keyboard events.
-      if (editor.innerHTML === beforeHTML) {
-        if (!document.execCommand("insertLineBreak")) {
-          document.execCommand("insertParagraph")
-        }
-        editor.dispatchEvent(new Event("input", { bubbles: true }))
-      }
-    }
-
-    const handleKeydown = (e: KeyboardEvent) => {
-      if (!e.isTrusted) return
-      if (e.key !== "Enter") return
-      if (e.isComposing || e.keyCode === 229) return
-
-      // 防守：如果事件来自队列 overlay 内部，不拦截（让队列自己处理）
-      const path = e.composedPath()
-      const isFromQueue = path.some(
-        (el) =>
-          el instanceof HTMLElement &&
-          (el.classList?.contains("gh-queue-panel") ||
-            el.classList?.contains("gh-queue-input") ||
-            el.classList?.contains("gh-queue-item-edit-input")),
-      )
-      if (isFromQueue) return
-
-      const editor = path.find(
-        (element) => element instanceof HTMLElement && adapter.isValidTextarea(element),
-      ) as HTMLElement | undefined
-
-      if (!editor) return
-
-      const hasPrimaryModifier = e.ctrlKey || e.metaKey
-      const hasAnyModifier = hasPrimaryModifier || e.altKey
-      const isSubmitKey =
-        promptSubmitShortcut === "ctrlEnter"
-          ? hasPrimaryModifier && !e.altKey && !e.shiftKey
-          : !hasAnyModifier && !e.shiftKey
-      const shouldInsertNewlineInCtrlEnterMode =
-        promptSubmitShortcut === "ctrlEnter" && !hasAnyModifier && !e.shiftKey
-
-      if (isSubmitKey) {
-        e.preventDefault()
-        e.stopPropagation()
-        e.stopImmediatePropagation()
-
-        void (async () => {
-          promptManager.syncAiStudioSubmitShortcut(promptSubmitShortcut)
-          const success = await promptManager.submitPrompt(promptSubmitShortcut)
-          if (success) {
-            setSelectedPrompt(null)
-          }
-        })()
-        return
-      }
-
-      // In Ctrl+Enter mode, block plain Enter to avoid accidental native submit
-      if (shouldInsertNewlineInCtrlEnterMode) {
-        e.preventDefault()
-        e.stopPropagation()
-        e.stopImmediatePropagation()
-        insertNewLine(editor)
-      }
-    }
-
-    // Claude 特殊处理：在部分页面中，站点自身会较早消费 Enter，
-    // document 捕获阶段可能已来不及拦截（表现为 Ctrl+Enter 模式下 Enter 仍触发发送）。
-    // 因此 Claude 使用 window 捕获监听以提前拦截。
-    // 注意：这里 return 后不会再注册 document 监听，不会双重挂载。
-    if (adapter.getSiteId() === SITE_IDS.CLAUDE) {
-      window.addEventListener("keydown", handleKeydown, true)
-      return () => {
-        window.removeEventListener("keydown", handleKeydown, true)
-      }
-    }
-
-    // 其他站点保持原有 document 捕获监听，避免扩大行为影响面。
-    document.addEventListener("keydown", handleKeydown, true)
-    return () => {
-      document.removeEventListener("keydown", handleKeydown, true)
-    }
-  }, [adapter, promptManager, promptSubmitShortcut])
-
   // Clear selected prompt tag after clicking native send button
   useEffect(() => {
     if (!adapter || !selectedPrompt) return
@@ -3539,9 +3406,6 @@ export const App = () => {
           }}
           onCancel={() => setIsFloatingToolbarClearOpen(false)}
         />
-      )}
-      {adapter && queueDispatcher && (settings?.features?.prompts?.promptQueue ?? false) && (
-        <QueueOverlay adapter={adapter} dispatcher={queueDispatcher} />
       )}
       {showExtensionUpdateNotice && (
         <section className="gh-update-notice gh-interactive" role="status" aria-live="polite">

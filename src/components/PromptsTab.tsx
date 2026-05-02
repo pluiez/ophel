@@ -77,11 +77,6 @@ export const PromptsTab: React.FC<PromptsTabProps> = ({
   onPromptSelect,
   selectedPromptId,
 }) => {
-  const DOUBLE_CLICK_DELAY_MS = 340
-
-  const doubleClickToSend = useSettingsStore(
-    (state) => state.settings.features?.prompts?.doubleClickToSend ?? false,
-  )
   const submitShortcut = useSettingsStore(
     (state) => state.settings.features?.prompts?.submitShortcut ?? "enter",
   )
@@ -140,7 +135,6 @@ export const PromptsTab: React.FC<PromptsTabProps> = ({
     prompt: Prompt | null
   }>({ show: false, prompt: null })
 
-  const clickTimerRef = useRef<number | null>(null)
   const locateHighlightTimerRef = useRef<number | null>(null)
   const promptListRef = useRef<HTMLDivElement | null>(null)
   const [locatedPromptId, setLocatedPromptId] = useState<string | null>(null)
@@ -283,9 +277,6 @@ export const PromptsTab: React.FC<PromptsTabProps> = ({
 
   useEffect(() => {
     return () => {
-      if (clickTimerRef.current !== null) {
-        window.clearTimeout(clickTimerRef.current)
-      }
       if (locateHighlightTimerRef.current !== null) {
         window.clearTimeout(locateHighlightTimerRef.current)
       }
@@ -421,32 +412,7 @@ export const PromptsTab: React.FC<PromptsTabProps> = ({
 
   const handlePromptClick = (prompt: Prompt) => {
     setLocatedPromptId(null)
-
-    if (!doubleClickToSend) {
-      void handleSelect(prompt)
-      return
-    }
-
-    if (clickTimerRef.current !== null) {
-      window.clearTimeout(clickTimerRef.current)
-      clickTimerRef.current = null
-    }
-
-    clickTimerRef.current = window.setTimeout(() => {
-      clickTimerRef.current = null
-      void handleSelect(prompt)
-    }, DOUBLE_CLICK_DELAY_MS)
-  }
-
-  const handlePromptDoubleClick = (prompt: Prompt) => {
-    if (clickTimerRef.current !== null) {
-      window.clearTimeout(clickTimerRef.current)
-      clickTimerRef.current = null
-    }
-
-    if (doubleClickToSend) {
-      void handleSelect(prompt, true)
-    }
+    void handleSelect(prompt)
   }
 
   // Toggle pin state
@@ -1712,7 +1678,6 @@ export const PromptsTab: React.FC<PromptsTabProps> = ({
                 data-prompt-id={p.id}
                 className={`prompt-item ${isHighlighted ? "selected" : ""} ${isLocated ? "located" : ""} ${draggedId === p.id ? "dragging" : ""}`}
                 onClick={() => handlePromptClick(p)}
-                onDoubleClick={() => handlePromptDoubleClick(p)}
                 draggable={false}
                 onDragStart={(e) => handleDragStart(e, p.id, e.currentTarget as HTMLDivElement)}
                 onDragOver={(e) => handleDragOver(e, p.id)}
