@@ -1,4 +1,4 @@
-export const USERSCRIPT_ASSET_REPOSITORY = "urzeye/ophel"
+export const USERSCRIPT_ASSET_REPOSITORY = "pluiez/ophel"
 export const USERSCRIPT_ASSET_BRANCH = "userscript-assets"
 export const USERSCRIPT_MERMAID_RUNNER_REPOSITORY = "urzeye/ophel"
 export const USERSCRIPT_MERMAID_RUNNER_BRANCH = "main"
