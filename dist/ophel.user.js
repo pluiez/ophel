@@ -51,25 +51,25 @@
 // @require            https://cdn.jsdelivr.net/npm/katex@0.16.44/dist/katex.min.js
 // @resource           ophelAssistantMermaidRunner   https://cdn.jsdelivr.net/gh/urzeye/ophel@main/assets/assistant-mermaid-runner.js
 // @resource           ophelAssistantMermaidVendor   https://cdn.jsdelivr.net/npm/@mermaid-js/tiny@11.13.0/dist/mermaid.tiny.js
-// @resource           ophelIcon                     https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel-icon.193ed41c2441.png
+// @resource           ophelIcon                     https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel-icon.193ed41c2441.png
 // @resource           ophelKatexCss                 https://cdn.jsdelivr.net/npm/katex@0.16.44/dist/katex.min.css
-// @resource           ophelLocaleDe                 https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel.locale.de.cb113ffea46a.json
-// @resource           ophelLocaleEn                 https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel.locale.en.7f081d3b912c.json
-// @resource           ophelLocaleEs                 https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel.locale.es.17e4b3de0bab.json
-// @resource           ophelLocaleFr                 https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel.locale.fr.13f22558466f.json
-// @resource           ophelLocaleJa                 https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel.locale.ja.da386f9ecef7.json
-// @resource           ophelLocaleKo                 https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel.locale.ko.4f30772f8e80.json
-// @resource           ophelLocalePt                 https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel.locale.pt.fe290b9ff452.json
-// @resource           ophelLocaleRu                 https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel.locale.ru.ff2de8e43883.json
-// @resource           ophelLocaleZhCN               https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel.locale.zh-CN.0b3e34ea015f.json
-// @resource           ophelLocaleZhTW               https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel.locale.zh-TW.388aead01b77.json
-// @resource           ophelNotificationBrightAlert  https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel-sound-bright-alert.568967a3d9f8.ogg
-// @resource           ophelNotificationDefault      https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel-sound-default.15d3cda1ee80.mp3
-// @resource           ophelNotificationGlassPing    https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel-sound-glass-ping.2379b58f953e.ogg
-// @resource           ophelNotificationSoftChime    https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel-sound-soft-chime.063564703b60.ogg
-// @resource           ophelStyles                   https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel.user.baea75e56375.css
-// @resource           ophelWatermarkBg48            https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel-watermark-bg-48.4afc99afe0ef.png
-// @resource           ophelWatermarkBg96            https://cdn.jsdelivr.net/gh/urzeye/ophel@userscript-assets/userscript-assets/ophel-watermark-bg-96.3e26f2233a12.png
+// @resource           ophelLocaleDe                 https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel.locale.de.cb113ffea46a.json
+// @resource           ophelLocaleEn                 https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel.locale.en.7f081d3b912c.json
+// @resource           ophelLocaleEs                 https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel.locale.es.17e4b3de0bab.json
+// @resource           ophelLocaleFr                 https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel.locale.fr.13f22558466f.json
+// @resource           ophelLocaleJa                 https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel.locale.ja.da386f9ecef7.json
+// @resource           ophelLocaleKo                 https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel.locale.ko.4f30772f8e80.json
+// @resource           ophelLocalePt                 https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel.locale.pt.fe290b9ff452.json
+// @resource           ophelLocaleRu                 https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel.locale.ru.ff2de8e43883.json
+// @resource           ophelLocaleZhCN               https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel.locale.zh-CN.0b3e34ea015f.json
+// @resource           ophelLocaleZhTW               https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel.locale.zh-TW.388aead01b77.json
+// @resource           ophelNotificationBrightAlert  https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel-sound-bright-alert.568967a3d9f8.ogg
+// @resource           ophelNotificationDefault      https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel-sound-default.15d3cda1ee80.mp3
+// @resource           ophelNotificationGlassPing    https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel-sound-glass-ping.2379b58f953e.ogg
+// @resource           ophelNotificationSoftChime    https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel-sound-soft-chime.063564703b60.ogg
+// @resource           ophelStyles                   https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel.user.baea75e56375.css
+// @resource           ophelWatermarkBg48            https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel-watermark-bg-48.4afc99afe0ef.png
+// @resource           ophelWatermarkBg96            https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/ophel-watermark-bg-96.3e26f2233a12.png
 // @connect            *
 // @grant              GM_addStyle
 // @grant              GM_addValueChangeListener
