@@ -4,6 +4,16 @@
 
 ---
 
+## 关于执行环境
+
+这份文档假定**在普通 terminal 环境**执行 git 操作——你自己的电脑 shell、Claude Code CLI 终端、CI 等。所有命令都是标准 `git` / `pnpm` / `bash`，不依赖任何特殊运行时。
+
+如果是在 **Claude Code on the web 沙箱**里跑，沙箱有几条安全限制会让特定步骤失败（git worktree commit、tag ref push、jsdelivr 直连验证）。这些**只在沙箱里出现**，普通 terminal 环境完全不会遇到。沙箱限制集中在底部"## 仅 Claude Code on the web 沙箱的限制"章节，正常环境可以整段忽略。
+
+**判断当前环境**：在 shell 里看 `/tmp/code-sign` 是否存在——存在就是沙箱，不存在就是普通环境。
+
+---
+
 ## 仓库分支结构
 
 | 分支                | 用途                                                     | 操作约束                                        |
@@ -87,6 +97,8 @@ git commit -m "build: rebuild userscript artifact for v<上游 tag>-personal-<N>
 git push --force-with-lease origin personal
 
 # 9. 打稳定回滚 tag
+#    沙箱注：Claude Code on the web 在这一步会 HTTP 403（见底部 S2），
+#    需要你从普通 terminal 完成 push origin v<...>。
 git tag -a v<上游 tag>-personal-<N> -m "Personal fork release N atop upstream v<上游 tag>"
 git push origin v<上游 tag>-personal-<N>
 ```
@@ -129,23 +141,11 @@ userscript 从 jsdelivr 加载 i18n、CSS、图标等资源，URL 写死指向 `
 
 **修复**：执行日常流程的 step 5 + step 6。
 
-### 2. 不要在 git worktree 里执行 commit
-
-环境的签名服务（`/tmp/code-sign`）在 worktree 里会 hard-fail：
-
-```
-signing operation failed: signing server returned status 400: missing source
-```
-
-不论 commit 大小、不论是否 orphan、不论 parent 是真实 commit 还是空——只要在 worktree 里就失败。
-
-**变通**：直接在主仓库切分支操作。如果担心污染工作树，用 `git stash push -m "wip" -- <files>` 暂存当前改动，切到目标分支处理，再切回来 `git stash pop`。
-
-### 3. `dist/` 在 .gitignore 里，commit 需要 `-f`
+### 2. `dist/` 在 .gitignore 里，commit 需要 `-f`
 
 `dist/ophel.user.js` 是构建产物，`.gitignore` 排除了整个 `dist/`。每次 add 都需要 `git add -f dist/ophel.user.js`。**不要修改 .gitignore**（其他构建场景仍依赖排除规则）。
 
-### 4. lint-staged 在 dist 上跑 prettier 的 `[FAILED]` 提示无害
+### 3. lint-staged 在 dist 上跑 prettier 的 `[FAILED]` 提示无害
 
 每次 commit dist 时 lint-staged 会显示：
 
@@ -156,16 +156,74 @@ signing operation failed: signing server returned status 400: missing source
 
 这是 prettier 改了 minified 文件后试图 re-stage 但被 .gitignore 拦截，**实际写入 commit 的还是 `git add -f` 时的原始 build 输出**。已用 hash 比对验证多次。无需理会。
 
-### 5. 跨语言 i18n 字段不强制要求齐全
+### 4. 跨语言 i18n 字段不强制要求齐全
 
 新增 i18n key 时只补 `zh-CN/index.ts` 和 `en/index.ts` 即可。其他 8 种语言通过 `t()` 的英文回退兜底，不会引发 runtime 错误。如果哪天某个其他语言出现裸 i18n key，再单独补。
 
-### 6. Tampermonkey 不会因为 `@version` 没变就跳过更新
+### 5. Tampermonkey 不会因为 `@version` 没变就跳过更新
 
 userscript 的 `@version` 字段沿用上游版本号，每次发布都不递增。Tampermonkey 在用户手动从 URL 安装时通常会强制覆盖，但**如果调试时不确定装的是哪一版**：
 
 - 在 Tampermonkey 编辑器里搜 `panel-snap-peek` 或其他 trim 标记字符串，能搜到 → 是当前版本
 - 搜不到 → 装的是更早的版本，需要手动卸载再重装
+
+---
+
+## 仅 Claude Code on the web 沙箱的限制
+
+下面这些**只在 Claude Code 网页版的沙箱**里会出现。普通 terminal 环境（你自己的电脑、Claude Code CLI、CI）**不会遇到**，可以整段忽略。仅当你让 Claude Code on the web 的 agent 替你执行同步流程时，需要知道这些 corner case。
+
+### S1. git worktree 里 commit 失败：signing server "missing source"
+
+沙箱的 git 签名服务（`/tmp/code-sign`）在 worktree 里 hard-fail：
+
+```
+signing operation failed: signing server returned status 400: missing source
+```
+
+不论 commit 大小、是否 orphan、parent 是否真实——只要在 worktree 里就 fail。
+
+**沙箱内的变通**：在主仓库 `git checkout` 切分支处理，需要保护工作树时用 `git stash push -m "wip" -- <files>` 收起当前改动。
+
+**普通 terminal 环境**：worktree 是首选方式（不污染主工作树），可以正常用 `git worktree add` 干活，**不要照搬这个变通**。
+
+### S2. tag ref push 返回 HTTP 403
+
+沙箱的 git proxy 拒绝 `refs/tags/*` 写操作：
+
+```
+error: RPC failed; HTTP 403 curl 22 The requested URL returned error: 403
+send-pack: unexpected disconnect while reading sideband packet
+fatal: the remote end hung up unexpectedly
+```
+
+`refs/heads/*`（branch ref）push 正常，**只有 tag ref 被拦**。MCP github 工具也没有 create-tag/release 写接口可以绕过。
+
+**变通**：让 Claude 完成所有源码改动 + branch push，最后由你从普通 terminal 跑一行：
+
+```bash
+git fetch origin
+git checkout personal
+git tag -a v<...>-personal-<N> <commit-sha> -m "..."
+git push origin v<...>-personal-<N>
+```
+
+或者直接在 GitHub Web 界面 Releases 页面 "Draft a new release" 时输入 tag 名让 GitHub 创建。
+
+### S3. 沙箱无法直接 curl 验证 jsdelivr / GitHub raw 之外的外部 URL
+
+沙箱网络对很多 host 是 hard-block：
+
+```
+HTTP/2 403
+x-deny-reason: host_not_allowed
+```
+
+具体已知会被拦的：`cdn.jsdelivr.net`、`raw.githubusercontent.com` 之类的纯 CDN/raw 域。`github.com` 的 git push/pull 通过专用 proxy 是工作的。
+
+**影响**：沙箱里没法替你验证 "userscript-assets 推上去后 jsdelivr 镜像是否就绪"。
+
+**变通**：从你自己的浏览器直接访问对应 jsdelivr URL，或者在普通 terminal 跑 `curl -I "https://cdn.jsdelivr.net/gh/pluiez/ophel@userscript-assets/userscript-assets/<file>"` 确认 200。
 
 ---
 
