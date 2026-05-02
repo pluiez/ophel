@@ -163,6 +163,7 @@ export interface Settings {
     defaultPosition: "left" | "right" // 默认位置
     defaultEdgeDistance: number // 默认边距 (0-400, 默认 25)
     edgeSnapThreshold: number // 吸附触发距离 (0-400, 默认 30)
+    edgeSnapPeekWidth: number // 自动吸附隐藏时露出宽度 (0-16, 默认 4, 单位 px)
     height: number // 面板高度 (50-100, 默认 85, 单位 vh)
     width: number // 面板宽度 (200-600, 默认 320, 单位 px)
   }
@@ -374,6 +375,7 @@ export const DEFAULT_SETTINGS: Settings = {
     defaultPosition: "right",
     defaultEdgeDistance: 0,
     edgeSnapThreshold: 30,
+    edgeSnapPeekWidth: 4,
     height: 85,
     width: 320,
   },

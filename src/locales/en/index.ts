@@ -676,6 +676,8 @@ export const en = {
   edgeSnapHideDesc: "Automatically snap to edge when dragged to screen edge, peek on hover",
   edgeSnapThresholdLabel: "Snap Threshold",
   edgeSnapThresholdDesc: "How close to edge triggers snap when dragging",
+  edgeSnapPeekWidthLabel: "Hidden Peek Width",
+  edgeSnapPeekWidthDesc: "Width of the panel left visible after auto-snap (0 hides it completely)",
   // Panel Position Settings
   defaultPositionLabel: "Default Position",
   defaultPositionDesc: "Which side the panel appears after page refresh",

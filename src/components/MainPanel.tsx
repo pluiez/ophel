@@ -551,6 +551,8 @@ export const MainPanel: React.FC<MainPanelProps> = ({
           height: `${currentSettings.panel?.height ?? 85}vh`,
           // @ts-ignore - 注入 CSS 变量供吸附计算使用
           "--panel-width": `${currentSettings.panel?.width ?? 320}px`,
+          // @ts-ignore - 自动吸附隐藏时面板露出视口的宽度
+          "--panel-snap-peek": `${currentSettings.panel?.edgeSnapPeekWidth ?? 4}px`,
           minHeight: "500px",
           backgroundColor: "var(--gh-bg, #ffffff)",
           backgroundImage: "var(--gh-bg-image, none)",
