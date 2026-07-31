@@ -1536,4 +1536,104 @@ export class ClaudeAdapter extends SiteAdapter {
       return false
     }
   }
+
+  // ==================== 用量面板 ====================
+
+  /**
+   * 打开 Claude 原生的 Settings/Usage 弹窗。
+   *
+   * 背景：Claude 头像菜单 -> Usage 这条路径本身是可点击模拟的，但实测发现该菜单的
+   * 展开逻辑只认浏览器原生的可信事件（event.isTrusted），任何脚本发起的合成点击
+   * （无论是 element.click() 还是完整的 pointerdown/mousedown/pointerup/mouseup/
+   * click 序列）都无法触发它展开——这是浏览器层面的限制，不是选择器或时序问题。
+   *
+   * 改为直接在当前页面内嵌一个指向 `#settings/usage` 的同源 iframe：Claude 的
+   * CSP 声明了 `frame-ancestors 'self'`，允许被自己的页面同源内嵌；同时该弹窗
+   * 由客户端路由的 hash 驱动，只有整页硬导航（含 iframe 首次加载）才会在挂载时
+   * 读取并展开，单纯改写 location.hash 不会生效。这样拿到的是 Claude 真实的原生
+   * 弹窗和实时数据，不需要自己重新实现一个 Usage 面板。
+   */
+  openUsagePanel(): boolean {
+    try {
+      const existing = document.getElementById("ophel-usage-overlay")
+      if (existing) {
+        existing.remove()
+        return true
+      }
+
+      const url = "https://claude.ai/new#settings/usage"
+
+      const overlay = document.createElement("div")
+      overlay.id = "ophel-usage-overlay"
+      overlay.style.cssText =
+        "position:fixed;inset:0;z-index:2147483647;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;"
+
+      const wrap = document.createElement("div")
+      wrap.style.cssText = "position:relative;width:min(560px,92vw);height:min(720px,88vh);"
+
+      const panel = document.createElement("div")
+      panel.style.cssText =
+        "width:100%;height:100%;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35);opacity:0;transition:opacity .15s ease;"
+
+      const spinner = document.createElement("div")
+      spinner.textContent = "Loading Usage..."
+      spinner.style.cssText =
+        "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#888;font-size:14px;"
+
+      const closeBtn = document.createElement("button")
+      closeBtn.textContent = "✕"
+      closeBtn.setAttribute("aria-label", "Close")
+      closeBtn.style.cssText =
+        "position:absolute;top:-14px;right:-14px;width:28px;height:28px;border-radius:50%;border:none;background:#fff;color:#333;cursor:pointer;font-size:14px;line-height:28px;text-align:center;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.3);"
+
+      const iframe = document.createElement("iframe")
+      iframe.src = url
+      iframe.style.cssText = "width:100%;height:100%;border:none;display:block;"
+
+      let pollTimer = 0
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") close()
+      }
+      const close = () => {
+        if (pollTimer) window.clearInterval(pollTimer)
+        document.removeEventListener("keydown", onKeyDown)
+        overlay.remove()
+      }
+
+      closeBtn.addEventListener("click", close)
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) close()
+      })
+      document.addEventListener("keydown", onKeyDown)
+
+      panel.appendChild(spinner)
+      panel.appendChild(iframe)
+      wrap.appendChild(panel)
+      wrap.appendChild(closeBtn)
+      overlay.appendChild(wrap)
+      document.body.appendChild(overlay)
+
+      let attempts = 0
+      pollTimer = window.setInterval(() => {
+        attempts++
+        let ready = false
+        try {
+          ready = Boolean(iframe.contentDocument?.querySelector('[role="dialog"]'))
+        } catch {
+          // 跨域访问被拒绝时忽略，继续轮询直到超时
+        }
+        if (ready || attempts > 40) {
+          window.clearInterval(pollTimer)
+          pollTimer = 0
+          spinner.remove()
+          panel.style.opacity = "1"
+        }
+      }, 100)
+
+      return true
+    } catch (error) {
+      console.error("[ClaudeAdapter] openUsagePanel error:", error)
+      return false
+    }
+  }
 }

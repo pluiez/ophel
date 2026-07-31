@@ -346,6 +346,7 @@ const DEFAULT_COLLAPSED_BUTTONS: QuickButtonConfig[] = [
   { id: "theme", enabled: true },
   { id: "zenMode", enabled: true },
   { id: "settings", enabled: true },
+  { id: "usageOpen", enabled: true },
   { id: "scrollTop", enabled: true },
   { id: "manualAnchor", enabled: false },
   { id: "anchor", enabled: true },

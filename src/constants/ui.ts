@@ -16,6 +16,7 @@ import {
   EyeIcon,
   SettingsIcon,
   ThemeSystemIcon,
+  UsageIcon,
 } from "~components/icons"
 import { SparkleIcon } from "~components/icons/SparkleIcon"
 import { SHORTCUT_META } from "~constants/shortcuts"
@@ -1035,6 +1036,13 @@ export const COLLAPSED_BUTTON_DEFS: Record<
     canToggle: true,
     isPanelOnly: false,
     IconComponent: SettingsIcon,
+  },
+  usageOpen: {
+    icon: "📊",
+    labelKey: "usageOpen",
+    canToggle: true,
+    isPanelOnly: false,
+    IconComponent: UsageIcon,
   },
 }
 

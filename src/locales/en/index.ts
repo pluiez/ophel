@@ -1410,6 +1410,8 @@ Please output the optimized code block directly, followed by a brief summary of 
   queueBatchImportSuccess: "Imported {count} prompt(s)",
   queueBatchImportEmpty: "No prompts available to import",
   zenModeTitle: "Zen Mode",
+  usageOpen: "Usage",
+  usageOpenUnsupported: "This feature is only available on Claude",
   zenModeLabel: "Enable Zen Mode",
   zenModeDesc:
     "Hide sidebar and navigation elements to focus on the current conversation (configured independently for each site)",

@@ -1366,6 +1366,8 @@ export const zhCN = {
   queueBatchImportSuccess: "已导入 {count} 条提示词",
   queueBatchImportEmpty: "没有可导入的提示词",
   zenModeTitle: "禅模式 (Zen Mode)",
+  usageOpen: "用量",
+  usageOpenUnsupported: "该功能仅支持 Claude 网站",
   zenModeLabel: "启用禅模式",
   zenModeDesc: "隐藏侧边栏和导航元素，专注于当前对话（每个站点独立配置）",
   zenModeExitButton: "退出禅模式",

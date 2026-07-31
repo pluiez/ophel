@@ -524,6 +524,14 @@ export abstract class SiteAdapter {
   }
 
   /**
+   * 打开站点的用量面板（子类可覆盖以实现站点特定的打开逻辑）
+   * @returns 是否成功打开
+   */
+  openUsagePanel(): boolean {
+    return false
+  }
+
+  /**
    * 返回站点原生主题覆盖 CSS。
    * 默认不提供，子类可按需覆盖。
    */

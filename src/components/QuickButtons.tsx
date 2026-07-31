@@ -671,6 +671,12 @@ export const QuickButtons: React.FC<QuickButtonsProps> = ({
       setIsToolsMenuOpen(false)
       onOpenSettings?.()
     },
+    usageOpen: (e) => {
+      e?.stopPropagation()
+      if (!adapter?.openUsagePanel()) {
+        showToast(t("usageOpenUnsupported") || "该功能仅支持 Claude 网站", 2000)
+      }
+    },
   }
 
   // 渲染单个按钮

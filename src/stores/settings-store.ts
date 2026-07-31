@@ -111,6 +111,7 @@ const normalizeQuickButtons = (settings: SettingsInput): Settings["quickButtons"
   collapsed = ensureQuickButton(collapsed, { id: "globalSearch", enabled: true }, "floatingToolbar")
   collapsed = ensureQuickButton(collapsed, { id: "zenMode", enabled: true }, "theme")
   collapsed = ensureQuickButton(collapsed, { id: "settings", enabled: true }, "zenMode")
+  collapsed = ensureQuickButton(collapsed, { id: "usageOpen", enabled: true }, "settings")
 
   return {
     collapsed,
