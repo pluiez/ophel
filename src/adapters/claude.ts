@@ -88,10 +88,14 @@ export class ClaudeAdapter extends SiteAdapter {
   private activeOrganizationIdExpiresAt = 0
 
   match(): boolean {
-    return (
+    const hostOk =
       window.location.hostname.includes("claude.ai") ||
       window.location.hostname.includes("claude.com")
-    )
+    if (!hostOk) return false
+
+    // 只在新对话页和具体对话页启用，避免在 /code/artifact/... 等无关页面上挂载面板
+    const path = window.location.pathname
+    return path === "/" || path === "/new" || path.startsWith("/chat/")
   }
 
   getSiteId(): string {
