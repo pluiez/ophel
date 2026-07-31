@@ -36,7 +36,7 @@ https://github.com/pluiez/ophel/raw/personal/dist/ophel.user.js
 或者用 tag（推荐稳定版）：
 
 ```
-https://github.com/pluiez/ophel/raw/v1.0.44-personal-1/dist/ophel.user.js
+https://github.com/pluiez/ophel/raw/v1.0.44-personal-2/dist/ophel.user.js
 ```
 
 `personal` 分支链接内容随每次 rebase 变化；tag 链接内容永远固定。
@@ -109,12 +109,14 @@ git push origin v<上游 tag>-personal-<N>
 
 ## 私改 commits 清单（按 rebase 后期望的顺序）
 
-| 顺序 | 类型          | 主题                                                                  | 触及的核心文件                                                                                                                                                                 |
-| ---- | ------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1    | fix(prompts)  | remove enter-key hijacking on chat input                              | `src/contents/main.ts` 等                                                                                                                                                      |
-| 2    | fix(options)  | drop empty prompts tab from features page                             | `src/tabs/options/pages/FeaturesPage.tsx`                                                                                                                                      |
-| 3    | feat(sidebar) | hide auto-snapped panel fully off-screen with configurable peek width | `src/style.css`, `src/utils/storage.ts`, `src/components/MainPanel.tsx`, `src/tabs/options/pages/GeneralPage.tsx`, `src/locales/{zh-CN,en}/index.ts`, `src/components/App.tsx` |
-| 4    | build         | point userscript asset CDN at fork                                    | `src/platform/userscript/resource-manifest.ts`（一行）                                                                                                                         |
+| 顺序 | 类型          | 主题                                                                  | 触及的核心文件                                                                                                                                                                                                                                                               |
+| ---- | ------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | fix(prompts)  | remove enter-key hijacking on chat input                              | `src/contents/main.ts` 等                                                                                                                                                                                                                                                    |
+| 2    | fix(options)  | drop empty prompts tab from features page                             | `src/tabs/options/pages/FeaturesPage.tsx`                                                                                                                                                                                                                                    |
+| 3    | feat(sidebar) | hide auto-snapped panel fully off-screen with configurable peek width | `src/style.css`, `src/utils/storage.ts`, `src/components/MainPanel.tsx`, `src/tabs/options/pages/GeneralPage.tsx`, `src/locales/{zh-CN,en}/index.ts`, `src/components/App.tsx`                                                                                               |
+| 4    | build         | point userscript asset CDN at fork                                    | `src/platform/userscript/resource-manifest.ts`（一行）                                                                                                                                                                                                                       |
+| 5    | feat(claude)  | add one-click Usage panel to quick buttons                            | `src/adapters/base.ts`, `src/adapters/claude.ts`, `src/components/icons/UsageIcon.tsx`, `src/components/icons/index.ts`, `src/constants/ui.ts`, `src/components/QuickButtons.tsx`, `src/stores/settings-store.ts`, `src/utils/storage.ts`, `src/locales/{zh-CN,en}/index.ts` |
+| 6    | fix(claude)   | restrict activation to /new and /chat/\* paths                        | `src/adapters/claude.ts`, `vite.userscript.config.ts`                                                                                                                                                                                                                        |
 
 每次 rebase 后 commit hash 会变，但 subject 应保持稳定。新增私改 → 在这个表追加一行，并在 personal 分支上加 commit。
 
